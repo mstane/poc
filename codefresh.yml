@@ -43,18 +43,6 @@ steps:
           release_name_exported: steps.branch_release_name.result == 'success'
           master_branch: '"${{CF_BRANCH}}" != "master"'
 
-  build_loggingpoc_code:
-    stage: 'build'
-    title: Maven build
-    image: r.cfcr.io/mstaneops/mstane/mvn-docker-build:java-11
-    working_directory: ./loggingpoc
-    commands:
-      - mvn -U -s /settings.xml clean package
-    when:
-      condition:
-        all:
-          dependency_version_updated: steps.dependency_version_branch.result == 'success'
-
   build_loggingpoc_image:
     stage: 'build'
     title: Build LoggingPoc Docker Image
