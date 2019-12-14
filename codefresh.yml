@@ -1,0 +1,100 @@
+version: '1.0'
+mode: parallel
+stages:
+  - prepare
+  - build
+  - deploy
+steps:
+  main_clone:
+    stage: 'prepare'
+    title: Cloning main repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_REVISION}}'
+
+  branch_release_name:
+    stage: 'prepare'
+    title: Setup RELEASE_NAME variable with branch name
+    image: alpine/git
+    commands:
+      - cf_export RELEASE_NAME=${{GLOBAL_RELEASE_VERSION}}.${{CF_BRANCH_TAG_NORMALIZED}}
+      - cf_export CLUSTER='dev-cluster-1@Development'
+      - cf_export NPM_ENVIRONMENT=${{ENVIRONMENT}}
+      - cf_export DOCKER_ENVIRONMENT=${{ENVIRONMENT}}
+    when:
+      steps:
+        - name: main_clone
+          on:
+            - success
+      condition:
+        all:
+          tag_repo_false: "${{TAG_REPO}} == false"
+
+
+  dependency_version_branch:
+    stage: 'prepare'
+    title: Set DEPENDENCY_VERSION on branch
+    image: alpine/git
+    commands:
+      - cf_export DEPENDENCY_VERSION=${{GLOBAL_RELEASE_VERSION}}.${{CF_BRANCH_TAG_NORMALIZED}}
+    when:
+      condition:
+        all:
+          release_name_exported: steps.branch_release_name.result == 'success'
+          master_branch: '"${{CF_BRANCH}}" != "master"'
+
+  build_loggingpoc_code:
+    stage: 'build'
+    title: Maven build
+    image: r.cfcr.io/mstaneops/mstane/mvn-docker-build:java-11
+    working_directory: ./loggingpoc
+    commands:
+      - mvn -U -s /settings.xml clean package
+    when:
+      condition:
+        all:
+          dependency_version_updated: steps.dependency_version_branch.result == 'success'
+
+  build_loggingpoc_image:
+    stage: 'build'
+    title: Build LoggingPoc Docker Image
+    image_name: mstane/loggingpoc
+    type: build
+    working_directory: ./loggingpoc/target
+    dockerfile: ../Dockerfile
+    tag: ${{RELEASE_NAME}}
+    when:
+      steps:
+        - name: build_loggingpoc_code
+          on:
+            - success
+
+  tag_loggingpoc_image:
+    stage: 'deploy'
+    title: Tag Loggingpoc Latest Image
+    candidate: ${{build_loggingpoc_image}}
+    type: push
+    registry: cfcr
+    when:
+      condition:
+        all:
+          isRelease: "${{TAG_REPO}}"
+          ready: steps.build_loggingpoc_image.result == 'success'
+
+  deploy_loggingpoc:
+    stage: 'deploy'
+    title: Deploy Loggingpoc Image
+    type: deploy
+    kind: kubernetes
+    cluster: ${{CLUSTER}}
+    namespace: poc
+    service: loggingpoc
+    candidate:
+      image: '${{build_loggingpoc_image}}'
+      registry: cfcr
+    when:
+      condition:
+        all:
+          master_branch: '"${{CF_BRANCH}}" != "master"'
+          ready: steps.build_loggingpoc_image.result == 'success'
+
