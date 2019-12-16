@@ -46,7 +46,7 @@ steps:
   build_loggingpoc_image:
     stage: 'build'
     title: Build LoggingPoc Docker Image
-    image_name: mstane/loggingpoc
+    image_name: maven:3.5.2-jdk-8-alpine
     type: build
     working_directory: ./loggingpoc/target
     dockerfile: ../Dockerfile
