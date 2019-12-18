@@ -4,6 +4,7 @@ stages:
   - test
   - integration
   - build
+  - deploy
 steps:
   main_clone:
     title: Cloning main repository...
@@ -33,6 +34,15 @@ steps:
     image_name: mstane/loggingpoc
     working_directory: ./loggingpoc/target
     dockerfile: ../Dockerfile
-    tag: 'non-multi-stage'
-
-
+    tag: 'non-multi-stage2'
+  Deploy:
+    stage: deploy
+    title: Deploy Loggingpoc Image
+    type: deploy
+    kind: kubernetes
+    cluster: 'hello-cluster@My First Project'
+    namespace: default
+    service: loggingpoc
+    candidate:
+      image: '${{MyAppDockerImage}}'
+      registry: cfcr
