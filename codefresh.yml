@@ -31,16 +31,16 @@ steps:
     title: Building Docker Image
     type: build
     stage: build
-    image_name: mstane/loggingpoc
+    image_name: loggingpoc
     working_directory: ./loggingpoc/target
     dockerfile: ../Dockerfile
-    tag: 'non-multi-stage2'
+    tag: '0.0.0'
   Deploy:
     stage: deploy
     title: Deploy Loggingpoc Image
     type: deploy
     kind: kubernetes
-    cluster: 'hello-cluster@My First Project'
+    cluster: 'cluster-dev-1@MyProject'
     namespace: default
     service: loggingpoc
     candidate:
