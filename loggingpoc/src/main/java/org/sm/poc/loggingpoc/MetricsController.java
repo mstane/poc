@@ -211,6 +211,7 @@ public class MetricsController {
         try {
             MetricServiceClient metricServiceClient = MetricServiceClient.create();
             metricServiceClient.createTimeSeries(request);
+            metricServiceClient.close();
         } catch (IOException e) {
             log.warn(e.getMessage());
         }
