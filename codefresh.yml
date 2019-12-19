@@ -40,7 +40,7 @@ steps:
     title: Deploy Loggingpoc Image
     type: deploy
     kind: kubernetes
-    cluster: 'cluster-dev-1@MyProject'
+    cluster: 'my-cluster-1@MyProject'
     namespace: default
     service: loggingpoc
     candidate:
