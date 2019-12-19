@@ -195,6 +195,7 @@ public class MetricsController {
     }
 
     public TimeSeries prepareMetricTimeSeries(MetricTypes metricTypes) {
+        log.info(">>> Prepare metrics type: {} <<<", metricTypes.getMetricDescriptor().getType());
         return TimeSeries.newBuilder()
                 .setMetric(metricTypes.getMetricDescriptor())
                 .setResource(resource)
@@ -218,6 +219,7 @@ public class MetricsController {
 
     @Scheduled(fixedRate = 60000)
     public void sendMetrics() {
+        log.info(">>> Sending metrics <<<");
         prepareMetrics(
                 MetricTypes.stream()
                         .map(this::prepareMetricTimeSeries)
