@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 public class LoggingPocApplication extends Application<LoggingPocConfiguration> {
 
-    static final MetricRegistry metrics = new MetricRegistry();
-
     public static void main(final String[] args) throws Exception {
         new LoggingPocApplication().run(args);
     }
@@ -32,8 +30,6 @@ public class LoggingPocApplication extends Application<LoggingPocConfiguration> 
     @Override
     public void initialize(final Bootstrap<LoggingPocConfiguration> bootstrap) {
         bootstrap.setConfigurationSourceProvider(new ResourceConfigurationSourceProvider());
-
-        CollectorRegistry.defaultRegistry.register(new DropwizardExports(metrics));
     }
 
     @Override
@@ -53,6 +49,14 @@ public class LoggingPocApplication extends Application<LoggingPocConfiguration> 
         environment.healthChecks().register("template", healthCheck);
 
         startMetricsSender();
+
+//        CollectorRegistry.defaultRegistry.register(new DropwizardExports(new MetricRegistry()));
+
+        CollectorRegistry collectorRegistry = new CollectorRegistry();
+        collectorRegistry.register(new DropwizardExports(environment.metrics()));
+        environment.admin()
+                .addServlet("prometheusMetrics", new io.prometheus.client.exporter.MetricsServlet(collectorRegistry))
+                .addMapping("/prometheusMetrics");
 
     }
 
