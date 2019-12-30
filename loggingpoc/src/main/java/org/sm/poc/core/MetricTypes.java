@@ -1,4 +1,4 @@
-package org.sm.poc.loggingpoc;
+package org.sm.poc.core;
 
 import com.google.api.Metric;
 import com.sun.management.UnixOperatingSystemMXBean;
@@ -36,7 +36,7 @@ public enum MetricTypes {
     JVM_GC_TIME("jvmGcTime", () -> ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(g -> g.getCollectionTime()).sum()),
     JVM_GC_COUNT("jvmGcCount", () -> ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(g -> g.getCollectionCount()).sum());
 
-    private static final String METRIC_ROOT_DOMAIN = "custom.googleapis.com/my/";
+    private static final String METRIC_ROOT_DOMAIN = "custom.googleapis.com/poc/";
 
     private final Metric metric;
     private final Supplier<Long> function;

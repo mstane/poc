@@ -1,0 +1,7 @@
+logging:
+  level: INFO
+  loggers:
+    org.sm.poc: DEBUG
+
+template: Hello, %s!
+defaultName: Stranger
