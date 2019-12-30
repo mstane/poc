@@ -1,9 +1,12 @@
 package org.sm.poc;
 
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.dropwizard.DropwizardExports;
 import org.sm.poc.core.MetricsSender;
 import org.sm.poc.health.TemplateHealthCheck;
 import org.sm.poc.resources.EchoResource;
@@ -14,6 +17,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class LoggingPocApplication extends Application<LoggingPocConfiguration> {
+
+    static final MetricRegistry metrics = new MetricRegistry();
 
     public static void main(final String[] args) throws Exception {
         new LoggingPocApplication().run(args);
@@ -27,6 +32,8 @@ public class LoggingPocApplication extends Application<LoggingPocConfiguration> 
     @Override
     public void initialize(final Bootstrap<LoggingPocConfiguration> bootstrap) {
         bootstrap.setConfigurationSourceProvider(new ResourceConfigurationSourceProvider());
+
+        CollectorRegistry.defaultRegistry.register(new DropwizardExports(metrics));
     }
 
     @Override

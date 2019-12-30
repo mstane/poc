@@ -48,6 +48,11 @@
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-monitoring</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_dropwizard</artifactId>
+            <version>0.0.23</version>
+        </dependency>
     </dependencies>
 
     <build>
