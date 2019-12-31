@@ -9,6 +9,7 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
 import org.sm.poc.core.MetricsSender;
 import org.sm.poc.health.TemplateHealthCheck;
+import org.sm.poc.metrics.CounterExample;
 import org.sm.poc.resources.EchoResource;
 import org.sm.poc.resources.EnvResource;
 
@@ -48,7 +49,9 @@ public class LoggingPocApplication extends Application<LoggingPocConfiguration> 
                 new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
 
-        startMetricsSender();
+//        startMetricsSender();
+
+        new CounterExample(environment.metrics());
 
 //        CollectorRegistry.defaultRegistry.register(new DropwizardExports(new MetricRegistry()));
 
