@@ -58,6 +58,34 @@
             <artifactId>simpleclient_servlet</artifactId>
             <version>0.8.0</version>
         </dependency>
+
+        <!-- gc-monitor itself -->
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>gc-monitor</artifactId>
+            <version>1.0.0-RC2</version>
+        </dependency>
+
+        <!-- Third-party dependencies required by gc-monitor -->
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>rolling-metrics-core</artifactId>
+            <version>3.0.0-RC4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hdrhistogram</groupId>
+            <artifactId>HdrHistogram</artifactId>
+            <version>2.1.8</version>
+        </dependency>
+
+        <!-- Third-party dependencies in case of Dropwizard-Metrics integration -->
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>rolling-metrics-dropwizard</artifactId>
+            <version>3.0.0-RC4</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
